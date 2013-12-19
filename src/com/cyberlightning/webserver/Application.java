@@ -31,7 +31,6 @@ public class Application  {
 		
 		MessageService.getInstance().startThread();
 
-		
 		for(String s : args) {
 			if(s.contentEquals("-simulate")){
 			Runnable test = new TestRoutine();

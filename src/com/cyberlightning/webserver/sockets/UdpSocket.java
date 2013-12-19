@@ -141,7 +141,7 @@ public class UdpSocket implements Runnable  {
 				     			MessageService.getInstance().wakeThread();
 				     			sendBuffer.remove(msg);
 				     		}
-				     		this.suspendThread();
+				     		if (this.sendBuffer.isEmpty()) this.suspendThread();
 
 		   				} catch (IOException e) {
 		   					System.out.println(e.getMessage());
