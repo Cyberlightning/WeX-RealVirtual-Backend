@@ -182,8 +182,8 @@ public abstract class TranslationService {
 				e.uuid = key;
 				JSONObject content = (JSONObject) entity.get(key);
 				
-				if (entity.containsKey("attributes")) {
-					JSONObject attributes = (JSONObject) entity.get("attributes");
+				if (content.containsKey("attributes")) {
+					JSONObject attributes = (JSONObject) content.get("attributes");
 					Iterator<?> i = attributes.keySet().iterator();
 					while (i.hasNext()) {
 						String attrKey = (String)i.next();
