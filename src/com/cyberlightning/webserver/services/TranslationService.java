@@ -193,6 +193,7 @@ public abstract class TranslationService {
 							JSONArray loc = (JSONArray) attributes.get(attrKey); //TODO could 
 							e.location[0] = (double)loc.get(0);
 							e.location[1] = (double)loc.get(1);
+							e.attributes.put(attrKey,loc);
 							
 						} else {
 							e.attributes.put(attrKey, attributes.get(attrKey));
