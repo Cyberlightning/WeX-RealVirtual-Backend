@@ -9,6 +9,7 @@ import java.io.ObjectOutputStream;
 import java.net.DatagramPacket;
 import java.net.InetSocketAddress;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -153,6 +154,9 @@ public class DataStorageService implements Runnable {
 		case StaticResources.QUERY_TYPE:
 			entities = this.getEntitiesBySpatialCircleAndType(_query.points[0], _query.points[1],_query.radius,_query.maxResults, _query.type); 
 			break;
+		case StaticResources.QUERY_GET_ENTITY_TYPES:
+			return this.getAllEntityTypes();
+			
 		}
 		
 		if (entities.size() == 0 )return StaticResources.ERROR_CODE_NOT_FOUND;
@@ -244,7 +248,24 @@ public class DataStorageService implements Runnable {
 		}
 		return includedEntities;
 	}
-	
+	public String getAllEntityTypes() {
+		ArrayList<String> foundTypes = new ArrayList<String>();
+		EntityTable persistentEntityTable = this.loadData();
+		Collection<Entity> entities = persistentEntityTable.entities.values();
+		for (Entity entity: entities) {
+			boolean isFound = false;
+			for (String type : foundTypes) {
+				if (type.contentEquals(entity.attributes.get("type").toString())){
+					isFound = true;
+					break;
+				}
+				
+			}
+			if (!isFound) foundTypes.add(entity.attributes.get("type").toString());
+		}
+		
+		return TranslationService.convertArrayToJson(foundTypes);
+	}
 	/**
 	 * 
 	 * @param _uuids

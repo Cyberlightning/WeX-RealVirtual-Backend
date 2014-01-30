@@ -54,5 +54,9 @@ public class SpatialQuery {
 		this.maxResults = _maxResults;
 		this.queryType = StaticResources.QUERY_TYPE;
 	}
+	public SpatialQuery(int _query) {
+		this.queryType = _query;
+
+	}
 
 }

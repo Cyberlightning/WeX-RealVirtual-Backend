@@ -258,7 +258,7 @@ public class HttpSocketWorker implements Runnable,IMessageEvent {
 						this.wakeThread();	
 					}
 					
-				}else if (action[1].contentEquals("loadBySpatialAndType")) {
+				} else if (action[1].contentEquals("loadBySpatialAndType")) {
 					String lat = "";
 					String lon = "";
 					String type = "";
@@ -303,6 +303,12 @@ public class HttpSocketWorker implements Runnable,IMessageEvent {
 						this.messageObject = new MessageObject(DataStorageService.getInstance().getEntriesByParameter(new SpatialQuery(Float.parseFloat(lat),Float.parseFloat(lon),radius,max,type)));
 						this.wakeThread();	
 					}
+					
+				}else if (action[1].contentEquals("getAllDeviceTypes")) {
+					
+						this.messageObject = new MessageObject(DataStorageService.getInstance().getEntriesByParameter(new SpatialQuery(StaticResources.QUERY_GET_ENTITY_TYPES)));
+						this.wakeThread();	
+					
 					
 				}
 				break;

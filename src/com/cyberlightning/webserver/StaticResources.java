@@ -82,6 +82,7 @@ public abstract class StaticResources {
 	public static final int QUERY_SPATIA_BOUNDING_BOX = 1;
 	public static final int QUERY_SPATIA_SHAPE = 2;
 	public static final int QUERY_TYPE = 3;
+	public static final int QUERY_GET_ENTITY_TYPES = 4;
 	
 	public static final int HTTP_GET = 0;
 	public static final int HTTP_POST_FILE = 1;

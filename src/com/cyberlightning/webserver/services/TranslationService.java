@@ -159,7 +159,15 @@ public abstract class TranslationService {
 }
 
 */
-	
+	public static String convertArrayToJson(ArrayList<String> _array) {
+		JSONObject wrapper = new JSONObject();
+		JSONArray typeArray = new JSONArray();
+		for (String string : _array) {
+			typeArray.add(string);
+		}
+		wrapper.put("types",typeArray );
+		return wrapper.toJSONString();
+	}
 	
 	/**Serialize sensor event in JSON form in to a list of entity objects.
 	 * @param _jsonString
