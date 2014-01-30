@@ -17,6 +17,7 @@ import com.cyberlightning.webserver.StaticResources;
 import com.cyberlightning.webserver.entities.Entity;
 import com.cyberlightning.webserver.entities.EntityTable;
 import com.cyberlightning.webserver.entities.RowEntry;
+import com.cyberlightning.webserver.entities.Sensor;
 import com.cyberlightning.webserver.entities.SpatialQuery;
 
 /**
@@ -150,6 +151,7 @@ public class DataStorageService implements Runnable {
 			entities = this.getEntitiesBySpatialCircle(_query.points[0], _query.points[1],_query.radius,_query.maxResults); 
 			break;
 		case StaticResources.QUERY_TYPE:
+			entities = this.getEntitiesBySpatialCircleAndType(_query.points[0], _query.points[1],_query.radius,_query.maxResults, _query.type); 
 			break;
 		}
 		
@@ -197,6 +199,43 @@ public class DataStorageService implements Runnable {
 					if (numberOfResults < _max || _max == 0) {
 						includedEntities.add(persistentEntityTable.entities.get(row));
 						numberOfResults++;
+					} else {
+						break;
+					}
+				}
+			}
+		}
+		return includedEntities;
+	}
+	
+	/**
+	 * 
+	 * @param _lat
+	 * @param _lon
+	 * @param _radius
+	 * @return Return a list of entities within a circle of _radius from point (_lat,_lon) 
+	 */
+	public ArrayList<Entity> getEntitiesBySpatialCircleAndType(Float _lat, Float _lon, int _radius, int _max,String type) {
+		
+		ArrayList<Entity> includedEntities = new ArrayList<Entity>();
+		EntityTable persistentEntityTable = this.loadData();
+		Iterator<RowEntry> rows = persistentEntityTable.entities.keySet().iterator();
+		int numberOfResults = 0;
+		while (rows.hasNext()) {
+			RowEntry row = rows.next();
+			if (row.location != null) {
+				double x = row.location[0] - _lat;
+				double y = row.location[1] - _lon;
+				
+				if ((Math.sqrt(Math.pow(x, 2)+Math.pow(y, 2))/ 0.000008998719243599958) < _radius) {
+					if (numberOfResults < _max || _max == 0) {
+						Entity e = persistentEntityTable.entities.get(row);
+						if (e.attributes.get("type").toString().contentEquals(type)) {
+							includedEntities.add(persistentEntityTable.entities.get(row));
+							numberOfResults++;
+						}
+						
+						
 					} else {
 						break;
 					}

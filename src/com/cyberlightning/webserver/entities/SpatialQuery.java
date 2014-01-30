@@ -20,6 +20,18 @@ public class SpatialQuery {
 		this.points[3] = _maxLon;
 	}
 	
+	public SpatialQuery(float _lat, float _lon,int _radius, int _maxResults, String _type) {
+		this.queryType = StaticResources.QUERY_SPATIAL_CIRCLE;
+		this.maxResults = _maxResults;
+		this.radius = _radius;
+		this.points = new float[2];
+		this.points[0] = _lat;
+		this.points[1] = _lon;
+		this.type = _type;
+		this.queryType = StaticResources.QUERY_TYPE;
+	}
+	
+	
 	public SpatialQuery(float _lat, float _lon,int _radius, int _maxResults) {
 		this.queryType = StaticResources.QUERY_SPATIAL_CIRCLE;
 		this.maxResults = _maxResults;
@@ -27,6 +39,7 @@ public class SpatialQuery {
 		this.points = new float[2];
 		this.points[0] = _lat;
 		this.points[1] = _lon;
+		
 	}
 	
 	public SpatialQuery(float[] _points, int _maxResults) {

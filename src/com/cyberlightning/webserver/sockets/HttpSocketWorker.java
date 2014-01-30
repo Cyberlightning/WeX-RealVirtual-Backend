@@ -185,6 +185,7 @@ public class HttpSocketWorker implements Runnable,IMessageEvent {
 		
 		String[] queries = _content.split("&");
 		String[] maxResults;
+		String[] types;
 		int max = 0;
 		
 		for (int i = 0; i < queries.length; i++) {
@@ -254,6 +255,52 @@ public class HttpSocketWorker implements Runnable,IMessageEvent {
 						this.wakeThread();
 					} else {
 						this.messageObject = new MessageObject(DataStorageService.getInstance().getEntriesByParameter(new SpatialQuery(Float.parseFloat(lat),Float.parseFloat(lon),radius,max)));
+						this.wakeThread();	
+					}
+					
+				}else if (action[1].contentEquals("loadBySpatialAndType")) {
+					String lat = "";
+					String lon = "";
+					String type = "";
+					int radius = 0;
+					
+					for (int j = 0; j < queries.length;j++) {
+						
+						if (queries[j].contains("lat")) {
+							String[] la = queries[j].split("=");
+							lat = la[1].trim();
+						}
+						if (queries[j].contains("lon")) {
+							String[] lo = queries[j].split("=");
+							lon = lo[1].trim();
+						}
+						if (queries[j].contains("radius")) {
+							String[] rad = queries[j].split("=");
+							try {
+								radius = Integer.parseInt(rad[1].trim()); 
+							} catch (NumberFormatException e) {
+								radius = 0;
+							}
+						}
+						if (queries[j].contains("maxResults")) {
+							maxResults = queries[j].split("=");
+							try {
+								max = Integer.parseInt(maxResults[1].trim()); 
+							} catch (NumberFormatException e) {
+								max = 1;
+							}
+						}
+						if (queries[j].contains("type")) {
+							types = queries[j].split("=");
+							type = types[1].trim(); 
+							
+						}
+					}
+					if (lat == null || lon == null || radius < 1 || max < 0) {
+						this.messageObject = new MessageObject(StaticResources.ERROR_CODE_BAD_REQUEST);
+						this.wakeThread();
+					} else {
+						this.messageObject = new MessageObject(DataStorageService.getInstance().getEntriesByParameter(new SpatialQuery(Float.parseFloat(lat),Float.parseFloat(lon),radius,max,type)));
 						this.wakeThread();	
 					}
 					
