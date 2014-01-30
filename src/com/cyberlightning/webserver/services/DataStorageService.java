@@ -147,7 +147,7 @@ public class DataStorageService implements Runnable {
 		case StaticResources.QUERY_SPATIA_SHAPE:
 			break;
 		case StaticResources.QUERY_SPATIAL_CIRCLE:
-			entities = this.getEntitiesBySpatialCircle(_query.points[0], _query.points[1],_query.radius); 
+			entities = this.getEntitiesBySpatialCircle(_query.points[0], _query.points[1],_query.radius,_query.maxResults); 
 			break;
 		case StaticResources.QUERY_TYPE:
 			break;
@@ -182,18 +182,24 @@ public class DataStorageService implements Runnable {
 	 * @param _radius
 	 * @return Return a list of entities within a circle of _radius from point (_lat,_lon) 
 	 */
-	public ArrayList<Entity> getEntitiesBySpatialCircle(Float _lat, Float _lon, int _radius) {
+	public ArrayList<Entity> getEntitiesBySpatialCircle(Float _lat, Float _lon, int _radius, int _max) {
 		
 		ArrayList<Entity> includedEntities = new ArrayList<Entity>();
 		EntityTable persistentEntityTable = this.loadData();
 		Iterator<RowEntry> rows = persistentEntityTable.entities.keySet().iterator();
+		int numberOfResults = 0;
 		while (rows.hasNext()) {
 			RowEntry row = rows.next();
 			if (row.location != null) {
 				double x = row.location[0] - _lat;
 				double y = row.location[1] - _lon;
 				if ((Math.sqrt(Math.pow(x, 2)+Math.pow(y, 2))/ 0.000008998719243599958) < _radius) {
-					includedEntities.add(persistentEntityTable.entities.get(row));
+					if (numberOfResults < _max || _max == 0) {
+						includedEntities.add(persistentEntityTable.entities.get(row));
+						numberOfResults++;
+					} else {
+						break;
+					}
 				}
 			}
 		}
@@ -319,7 +325,9 @@ public class DataStorageService implements Runnable {
 				if (!suspendFlag) continue;
 				saveInProcessFlag = true;
 				EntityTable oldEntities = loadData();
+				System.out.println("Old Entities:" + oldEntities.entities.size());
 				entityTable.appendOldEntities(oldEntities.entities);
+				System.out.println("New Entities:" + entityTable.entities.size());
 				saveData(entityTable,StaticResources.DATABASE_FILE_NAME);
 				entityTable.clearAll();
 				saveData(baseStationReferences, StaticResources.REFERENCE_TABLE_FILE_NAME);

@@ -1,6 +1,7 @@
 package com.cyberlightning.webserver.sockets;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetSocketAddress;
@@ -42,7 +43,7 @@ public class UdpSocket implements Runnable  {
 		try {
 			
 		serverSocket = new DatagramSocket(this.port);
-		this.serverSocket.setReceiveBufferSize(StaticResources.UDP_PACKET_SIZE);
+		this.serverSocket.setReceiveBufferSize(3500000);
 		this.sendWorker = new SendWorker(uuid);
 		
 		} catch (SocketException e) {
@@ -50,7 +51,7 @@ public class UdpSocket implements Runnable  {
 			e.printStackTrace();
 			this.sendWorker.destroy();
 		}
-		
+		int index = 0;
 		while(true) {
         	
 			if (!MessageService.isStarted()) continue;
@@ -66,9 +67,17 @@ public class UdpSocket implements Runnable  {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+    		;
+			try {
+				String s = new String(receivedPacket.getData(),"utf-8");
+				System.out.println("PACKET AT LEAST RECEIVED: " +s);
+			} catch (UnsupportedEncodingException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+    		
     		MessageService.getInstance().addToMessageBuffer(new MessageObject(uuid,StaticResources.UDP_RECEIVER, receivedPacket));
 			MessageService.getInstance().wakeThread();
-    		
 		}
 	}
 	
