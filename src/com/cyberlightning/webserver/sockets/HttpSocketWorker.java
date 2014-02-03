@@ -118,7 +118,7 @@ public class HttpSocketWorker implements Runnable,IMessageEvent {
 		String statusLine = "HTTP/1.1 200 OK" + "\r\n";
 		String contentTypeLine = "Content-Type: text/plain; charset=utf-8" + "\r\n";
 		String connectionLine = "Connection: close\r\n";
-		String allowAllConnection = " Access-Control-Allow-Origin: * "+ "\r\n";
+		String allowAllConnection = "Access-Control-Allow-Origin: * "+ "\r\n";
 		String contentLengthLine = "Content-Length: " + _content.length() + "\r\n" + "\r\n";
 		String contentLine = _content;
 		
