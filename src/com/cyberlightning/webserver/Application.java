@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import com.cyberlightning.webserver.services.MessageService;
 import com.cyberlightning.webserver.services.DataStorageService;
+import com.cyberlightning.webserver.services.SaveFileRoutine;
 import com.cyberlightning.webserver.sockets.UdpSocket;
 import com.cyberlightning.webserver.sockets.HttpSocket;
 import com.cyberlightning.webserver.sockets.WebSocket;
@@ -16,6 +17,10 @@ public class Application  {
 		Runnable dataBase = DataStorageService.getInstance();
 		Thread dbThread = new Thread(dataBase);
 		dbThread.start();
+		
+		Runnable saveFileRoutine = new SaveFileRoutine(); 
+		Thread saveThread = new Thread (saveFileRoutine);
+		saveThread.start();
 		
 		Runnable websocket = new WebSocket();
 		Thread webThread = new Thread(websocket);

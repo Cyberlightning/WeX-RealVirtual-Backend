@@ -31,11 +31,11 @@ public class DataStorageService implements Runnable {
 	private static final DataStorageService _serilizationService = new DataStorageService();
 	public Map<String, DatagramPacket> eventBuffer= new ConcurrentHashMap<String, DatagramPacket>(); 
 	public Map<String, InetSocketAddress> baseStationReferences= new ConcurrentHashMap<String, InetSocketAddress>(); 
-	private EntityTable entityTable = new EntityTable();
+	public EntityTable entityTable = new EntityTable();
 	
-	private Thread saveFileRoutine;
+//	private Thread saveFileRoutine;
 	private boolean suspendFlag = true;
-	private volatile boolean saveInProcessFlag = false;
+	public volatile boolean saveInProcessFlag = false;
 	
 	private DataStorageService() {
 		
@@ -64,8 +64,8 @@ public class DataStorageService implements Runnable {
 	        refIn.close();
 	        ref.close();
 	         
-	        saveFileRoutine= new Thread((Runnable)(new SaveFileRoutine()));
-	        saveFileRoutine.start();
+//	        saveFileRoutine= new Thread((Runnable)(new SaveFileRoutine()));
+//	        saveFileRoutine.start();
 	         
 	      } catch (FileNotFoundException i) {
 	         EntityTable e = entityTable;
@@ -164,7 +164,7 @@ public class DataStorageService implements Runnable {
 		
 	}
 
-	private EntityTable loadData() {
+	public EntityTable loadData() {
 		
 		EntityTable dbFile = null;
 		try {
@@ -304,7 +304,7 @@ public class DataStorageService implements Runnable {
 		return baseUuids;
 	}
 
-	private void saveData (Object _object, String _fileName) {
+	public void saveData (Object _object, String _fileName) {
 		 
 		try {
 	         FileOutputStream fileOut =  new FileOutputStream(_fileName);
@@ -326,8 +326,11 @@ public class DataStorageService implements Runnable {
 	}
 
 	private synchronized void wakeThread() {
-	      suspendFlag = false;
-	       notify();
+	      if (suspendFlag) {
+	    	  suspendFlag = false;
+	    	  notify();
+	      }
+	       
 	}
 	
 	@Override
@@ -366,38 +369,12 @@ public class DataStorageService implements Runnable {
 					e.printStackTrace();
 				}
 			}
+			if (!this.eventBuffer.isEmpty()) continue;
 			suspendThread();
 		}
 	}
 	
-	private class SaveFileRoutine implements Runnable {
-
-		@Override
-		public void run() {
-			while (true) {
-				try {
-					Thread.sleep(StaticResources.SAVE_TO_HD_INTERVAL);
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				if (entityTable.entities.isEmpty()) continue;
-				if (!suspendFlag) continue;
-				saveInProcessFlag = true;
-				EntityTable oldEntities = loadData();
-				System.out.println("Old Entities:" + oldEntities.entities.size());
-				entityTable.appendOldEntities(oldEntities.entities);
-				System.out.println("New Entities:" + entityTable.entities.size());
-				saveData(entityTable,StaticResources.DATABASE_FILE_NAME);
-				entityTable.clearAll();
-				saveData(baseStationReferences, StaticResources.REFERENCE_TABLE_FILE_NAME);
-				saveInProcessFlag = false;
-				if (!eventBuffer.isEmpty()) wakeThread();
-			}
-			
-		}
-
-	}
+	
 	
 	
 }

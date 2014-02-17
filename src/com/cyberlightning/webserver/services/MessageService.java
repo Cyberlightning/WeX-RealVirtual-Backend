@@ -139,7 +139,6 @@ public class MessageService implements Runnable  {
 				
 					switch (msg.originType) {
 					case StaticResources.UDP_RECEIVER:
-						
 						DataStorageService.getInstance().addToBuffer(msg.originUUID, (DatagramPacket) msg.payload);
 						ArrayList<String> receivers = this.resolveReceivers(msg.originUUID);
 						for (String receiver: receivers) {
@@ -163,6 +162,7 @@ public class MessageService implements Runnable  {
 						
 					}
 				}
+				if (!this.messageBuffer.isEmpty()) continue;
 				suspendThread();
 		}	
 	}
