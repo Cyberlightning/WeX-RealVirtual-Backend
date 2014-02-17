@@ -176,12 +176,24 @@ public abstract class TranslationService {
 	public static ArrayList<Entity> decodeSensorJson(String _jsonString)  {
 		ArrayList<Entity> entities = new ArrayList<Entity>();
 		JSONParser parser = new JSONParser();
-		JSONObject entity;
+		JSONObject entity = null;
 		
 		try {
 			JSONObject context = (JSONObject) parser.parse(_jsonString.trim());
-			String contextUUID = (String) context.keySet().iterator().next();
-			entity = (JSONObject) context.get(contextUUID);
+			Iterator<?> wrapperKeys= context.keySet().iterator();
+			String contextUUID = null;
+			while (wrapperKeys.hasNext()) {
+				String wrapperKey = wrapperKeys.next().toString();
+				if (wrapperKey.contentEquals("dataformat_version")) {
+					if (!context.get(wrapperKey).toString().contentEquals("1.0")) {
+						System.out.println("This server supports only version 1.0 data format");
+					}
+				} else  {
+					contextUUID = wrapperKey;
+					entity = (JSONObject) context.get(contextUUID);
+				}
+			}
+			
 			Iterator<?> keys = entity.keySet().iterator();
 			while (keys.hasNext()) {
 				String key = (String) keys.next();
