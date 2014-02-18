@@ -182,17 +182,22 @@ public abstract class TranslationService {
 			JSONObject context = (JSONObject) parser.parse(_jsonString.trim());
 			Iterator<?> wrapperKeys= context.keySet().iterator();
 			String contextUUID = null;
+			boolean hasDataFormatVersionField = false;
 			while (wrapperKeys.hasNext()) {
 				String wrapperKey = wrapperKeys.next().toString();
 				if (wrapperKey.contentEquals("dataformat_version")) {
 					if (!context.get(wrapperKey).toString().contentEquals("1.0")) {
 						System.out.println("This server supports only version 1.0 data format");
+						
+					} else {
+						hasDataFormatVersionField = true;
 					}
 				} else  {
 					contextUUID = wrapperKey;
 					entity = (JSONObject) context.get(contextUUID);
 				}
 			}
+			if (!hasDataFormatVersionField) return null; 
 			
 			Iterator<?> keys = entity.keySet().iterator();
 			while (keys.hasNext()) {
@@ -358,6 +363,7 @@ public abstract class TranslationService {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 			System.out.print("ParseException: " + e1.getMessage());
+			return null;
 		}
 		
 		return entities;

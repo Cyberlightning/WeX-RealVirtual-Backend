@@ -97,19 +97,25 @@ public class DataStorageService implements Runnable {
 		else data = new String(_data.getData(),"utf8");
 		
 		ArrayList<Entity> entities = TranslationService.decodeSensorJson(data);
-		String contextUUID = null;
-		for (Entity entity : entities) {
-			RowEntry entry = new RowEntry(StaticResources.getTimeStamp());
-			if (entity.uuid != null) entry.entityUUID = entity.uuid;
-			if (entity.attributes.containsKey("address")) entry.address = (String) entity.attributes.get("address");
-			if (entity.location != null) entry.location = entity.location; 
-			entry.contextUUID = entity.contextUUID;
-			this.entityTable.addEntity(entry,entity);
-			
-			if (contextUUID !=null) continue;
-			contextUUID = entity.contextUUID;
-			this.baseStationReferences.put(contextUUID, (InetSocketAddress)_data.getSocketAddress());
+		
+		if (entities != null) {
+			String contextUUID = null;
+			for (Entity entity : entities) {
+				RowEntry entry = new RowEntry(StaticResources.getTimeStamp());
+				if (entity.uuid != null) entry.entityUUID = entity.uuid;
+				if (entity.attributes.containsKey("address")) entry.address = (String) entity.attributes.get("address");
+				if (entity.location != null) entry.location = entity.location; 
+				entry.contextUUID = entity.contextUUID;
+				this.entityTable.addEntity(entry,entity);
+				
+				if (contextUUID !=null) continue;
+				contextUUID = entity.contextUUID;
+				this.baseStationReferences.put(contextUUID, (InetSocketAddress)_data.getSocketAddress());
+			}
+		} else {
+			System.out.println("Dropping packet from " + _data.getAddress().getHostAddress());
 		}
+		
 		
 	}
 	/**
