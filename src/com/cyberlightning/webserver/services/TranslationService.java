@@ -1,5 +1,6 @@
 package com.cyberlightning.webserver.services;
 
+import java.net.DatagramPacket;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -169,6 +170,33 @@ public abstract class TranslationService {
 		return wrapper.toJSONString();
 	}
 	
+	/**
+	 * Returns JSON string without dataformat_version identifier if the RESTful data format is present and correct version. Otherwise will return null
+	 */
+	public static String removeDataformatVersionNumbering(String _jsonString) {
+		String returnString = null;
+		JSONParser parser = new JSONParser();
+		JSONObject context = null;
+		try {
+			context = (JSONObject) parser.parse(_jsonString.trim());
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		Iterator<?> wrapperKeys= context.keySet().iterator();
+		
+		while (wrapperKeys.hasNext()) {
+			String wrapperKey = wrapperKeys.next().toString();
+			if (wrapperKey.contentEquals("dataformat_version")) {
+				context.remove(wrapperKey);
+				break;
+				
+			} 
+		}	
+		returnString = context.toJSONString();
+		return returnString;
+	}
+	
 	/**Serialize sensor event in JSON form in to a list of entity objects.
 	 * @param _jsonString
 	 * @return ArrayList<Entity> 
@@ -179,6 +207,7 @@ public abstract class TranslationService {
 		JSONObject entity = null;
 		
 		try {
+			
 			JSONObject context = (JSONObject) parser.parse(_jsonString.trim());
 			Iterator<?> wrapperKeys= context.keySet().iterator();
 			String contextUUID = null;

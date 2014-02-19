@@ -23,6 +23,7 @@ import com.cyberlightning.webserver.interfaces.IMessageEvent;
 import com.cyberlightning.webserver.services.DataStorageService;
 import com.cyberlightning.webserver.services.Gzip;
 import com.cyberlightning.webserver.services.MessageService;
+import com.cyberlightning.webserver.services.TranslationService;
 
 public class WebSocketWorker implements Runnable {
 
@@ -449,7 +450,8 @@ public class WebSocketWorker implements Runnable {
 		     				if(Gzip.isCompressed(((DatagramPacket)msg.payload).getData())) {
 		     					content = Gzip.decompress(((DatagramPacket)msg.payload).getData());
 		     				} else {
-		     					content = new String(((DatagramPacket)msg.payload).getData(), "utf8");
+		     					content = TranslationService.removeDataformatVersionNumbering(new String(((DatagramPacket)msg.payload).getData(), "utf8"));
+		     					 
 		     				}
 		     				send(content);
 		     					
