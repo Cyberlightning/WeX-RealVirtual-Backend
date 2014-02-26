@@ -23,7 +23,7 @@ public class SaveFileRoutine implements Runnable {
 			DataStorageService.getInstance().entityTable.appendOldEntities(oldEntities.entities);
 			System.out.println("New Entities:" + DataStorageService.getInstance().entityTable.entities.size());
 			DataStorageService.getInstance().saveData(DataStorageService.getInstance().entityTable,StaticResources.DATABASE_FILE_NAME);
-			DataStorageService.getInstance().entityTable.clearAll();
+			//DataStorageService.getInstance().entityTable.clearAll();
 			DataStorageService.getInstance().saveData(DataStorageService.getInstance().baseStationReferences, StaticResources.REFERENCE_TABLE_FILE_NAME);
 			//DataStorageService.getInstance().saveInProcessFlag = false;
 			//if (!eventBuffer.isEmpty()) wakeThread();

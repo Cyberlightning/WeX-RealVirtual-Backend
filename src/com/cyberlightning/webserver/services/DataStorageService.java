@@ -128,8 +128,9 @@ public class DataStorageService implements Runnable {
 		
 		String jsonString = null;
 		ArrayList<Entity> entities = new ArrayList<Entity>();
-		EntityTable persistentEntityTable = this.loadData();
-		Entity e = persistentEntityTable.getEntity(_uuid);
+		//EntityTable persistentEntityTable = this.loadData();
+		
+		Entity e = this.entityTable.getEntity(_uuid);
 		if (e != null) {
 			entities.add(e);
 			jsonString = TranslationService.encodeJson(entities, _maxResults);
@@ -198,8 +199,8 @@ public class DataStorageService implements Runnable {
 	public ArrayList<Entity> getEntitiesBySpatialCircle(Float _lat, Float _lon, int _radius, int _max) {
 		
 		ArrayList<Entity> includedEntities = new ArrayList<Entity>();
-		EntityTable persistentEntityTable = this.loadData();
-		Iterator<RowEntry> rows = persistentEntityTable.entities.keySet().iterator();
+		//EntityTable persistentEntityTable = this.loadData();
+		Iterator<RowEntry> rows = this.entityTable.entities.keySet().iterator();
 		int numberOfResults = 0;
 		while (rows.hasNext()) {
 			RowEntry row = rows.next();
@@ -208,7 +209,7 @@ public class DataStorageService implements Runnable {
 				double y = row.location[1] - _lon;
 				if ((Math.sqrt(Math.pow(x, 2)+Math.pow(y, 2))/ 0.000008998719243599958) < _radius) {
 					if (numberOfResults < _max || _max == 0) {
-						includedEntities.add(persistentEntityTable.entities.get(row));
+						includedEntities.add(this.entityTable.entities.get(row));
 						numberOfResults++;
 					} else {
 						break;
@@ -229,8 +230,8 @@ public class DataStorageService implements Runnable {
 	public ArrayList<Entity> getEntitiesBySpatialCircleAndType(Float _lat, Float _lon, int _radius, int _max,String type) {
 		
 		ArrayList<Entity> includedEntities = new ArrayList<Entity>();
-		EntityTable persistentEntityTable = this.loadData();
-		Iterator<RowEntry> rows = persistentEntityTable.entities.keySet().iterator();
+		//EntityTable persistentEntityTable = this.loadData();
+		Iterator<RowEntry> rows = this.entityTable.entities.keySet().iterator();
 		int numberOfResults = 0;
 		while (rows.hasNext()) {
 			RowEntry row = rows.next();
@@ -240,9 +241,9 @@ public class DataStorageService implements Runnable {
 				
 				if ((Math.sqrt(Math.pow(x, 2)+Math.pow(y, 2))/ 0.000008998719243599958) < _radius) {
 					if (numberOfResults < _max || _max == 0) {
-						Entity e = persistentEntityTable.entities.get(row);
+						Entity e = this.entityTable.entities.get(row);
 						if (e.attributes.get("type").toString().contentEquals(type)) {
-							includedEntities.add(persistentEntityTable.entities.get(row));
+							includedEntities.add(this.entityTable.entities.get(row));
 							numberOfResults++;
 						}
 						
@@ -257,8 +258,8 @@ public class DataStorageService implements Runnable {
 	}
 	public String getAllEntityTypes() {
 		ArrayList<String> foundTypes = new ArrayList<String>();
-		EntityTable persistentEntityTable = this.loadData();
-		Collection<Entity> entities = persistentEntityTable.entities.values();
+		//EntityTable persistentEntityTable = this.loadData();
+		Collection<Entity> entities = this.entityTable.entities.values();
 		for (Entity entity: entities) {
 			boolean isFound = false;
 			for (String type : foundTypes) {
@@ -280,10 +281,10 @@ public class DataStorageService implements Runnable {
 	 */
 	public ArrayList<InetSocketAddress> resolveBaseStationAddresses(String[] _uuids) {
 		ArrayList<InetSocketAddress> addresses = new ArrayList<InetSocketAddress>();
-		EntityTable persistentEntityTable = this.loadData();
+		//EntityTable persistentEntityTable = this.loadData();
 		for(String uuid : _uuids) {
 			
-			Entity e = persistentEntityTable.getEntity(uuid);
+			Entity e = this.entityTable.getEntity(uuid);
 			
 			if (e != null) {
 				if (this.baseStationReferences.containsKey(e.contextUUID) && !addresses.contains(this.baseStationReferences.get(e.contextUUID))) {
