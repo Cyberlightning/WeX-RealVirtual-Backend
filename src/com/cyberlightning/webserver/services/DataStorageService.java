@@ -13,6 +13,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import com.cyberlightning.webserver.StaticResources;
 import com.cyberlightning.webserver.entities.Entity;
@@ -29,7 +30,7 @@ import com.cyberlightning.webserver.entities.SpatialQuery;
 public class DataStorageService implements Runnable {
 	
 	private static final DataStorageService _serilizationService = new DataStorageService();
-	public Map<String, DatagramPacket> eventBuffer= new ConcurrentHashMap<String, DatagramPacket>(); 
+	public CopyOnWriteArrayList<DatagramPacket> eventBuffer = new CopyOnWriteArrayList<DatagramPacket>();
 	public Map<String, InetSocketAddress> baseStationReferences= new ConcurrentHashMap<String, InetSocketAddress>(); 
 	public EntityTable entityTable = new EntityTable();
 	
@@ -324,7 +325,7 @@ public class DataStorageService implements Runnable {
 	      }
 	}
 	public void addToBuffer(String s, DatagramPacket d){
-		this.eventBuffer.put(s, d);
+		this.eventBuffer.add(d);
 		this.wakeThread();
 	}
 	public void suspendThread() {
@@ -359,15 +360,15 @@ public class DataStorageService implements Runnable {
 	        }
 			
 			if (eventBuffer.isEmpty()) continue;
-			Iterator<String> i = this.eventBuffer.keySet().iterator();
+			Iterator<DatagramPacket> i = this.eventBuffer.iterator();
 			while (i.hasNext()) {
-				String key = i.next();
+				DatagramPacket packet = i.next();
 				try {
 					if (this.saveInProcessFlag) {
 						break;
 					} else {
-						this.addEntry(this.eventBuffer.get(key));
-						this.eventBuffer.remove(key);
+						this.addEntry(packet);
+						this.eventBuffer.remove(packet);
 					}
 		
 				} catch (IOException e) {
