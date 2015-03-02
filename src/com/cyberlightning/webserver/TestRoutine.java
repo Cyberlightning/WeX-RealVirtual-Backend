@@ -41,7 +41,10 @@ public class TestRoutine implements Runnable {
 				e1.printStackTrace();
 			
 			}
-			String sample = "{\"d23c058698435eff\":{\"d23c058698435eff\":{\"sensors\":[{\"configuration\":[{\"interval\":1000,\"unit\":\"ms\"}],\"value\":{\"unit\":\"meters in second\",\"primitive\":\"double\",\"time\":\"2014-01-09 12:44:56\",\"values\":\"0.51\"},\"attributes\":{\"type\":\"anemometer\",\"voltage\":\"5v\",\"vendor\":\"Modern Device\",\"name\":\"wind speed meter\"}}],\"actuators\":[{\"configuration\":[],\"actions\":[{\"value\":\"[true,false]\",\"primitive\":\"Boolean\",\"unit\":\"boolean\",\"parameter\":\"powerstate\"}],\"callbacks\":[{\"target\":\"powerstate\",\"return_type\":\"Boolean\"}],\"attributes\":{\"type\":\"powersocket\",\"name\":\"IQSW-IP 10 IQSocket\"}}],\"attributes\":{\"location\":\"Cyber development\",\"gps\":[65.0117870432389,25.47571696359944],\"name\":\"CyberDruido\"}}}}";
+
+			float randomNum = 5 + (int)(Math.random()*25);
+			String anemoVal = String.valueOf(randomNum);
+			String sample = "{\"d23c058698435eff\":{\"d23c058698435eff\":{\"sensors\":[{\"configuration\":[{\"interval\":1000,\"unit\":\"ms\"}],\"value\":{\"unit\":\"meters in second\",\"primitive\":\"double\",\"time\":\"2014-01-09 12:44:56\",\"values\":\""+ anemoVal +"\"},\"attributes\":{\"type\":\"anemometer\",\"voltage\":\"5v\",\"vendor\":\"Modern Device\",\"name\":\"wind speed meter\"}}],\"actuators\":[{\"configuration\":[],\"actions\":[{\"value\":\"[true,false]\",\"primitive\":\"Boolean\",\"unit\":\"boolean\",\"parameter\":\"powerstate\"}],\"callbacks\":[{\"target\":\"powerstate\",\"return_type\":\"Boolean\"}],\"attributes\":{\"type\":\"powersocket\",\"name\":\"IQSW-IP 10 IQSocket\"}}],\"attributes\":{\"location\":\"Cyber development\",\"gps\":[65.0117870432389,25.47571696359944],\"name\":\"CyberDruido\"}}}}";
 			byte[] byteBuffer = null;
 			try {
 				byteBuffer = Gzip.compress(sample);
