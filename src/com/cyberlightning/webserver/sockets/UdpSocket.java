@@ -6,13 +6,18 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetSocketAddress;
 import java.net.SocketException;
+import java.nio.ByteBuffer;
+import java.nio.charset.Charset;
 import java.util.Iterator;
 import java.util.UUID;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import org.apache.commons.codec.Charsets;
+
 import com.cyberlightning.webserver.StaticResources;
 import com.cyberlightning.webserver.entities.MessageObject;
 import com.cyberlightning.webserver.interfaces.IMessageEvent;
+import com.cyberlightning.webserver.services.Gzip;
 import com.cyberlightning.webserver.services.MessageService;
 
 public class UdpSocket implements Runnable  {
@@ -62,19 +67,22 @@ public class UdpSocket implements Runnable  {
     		DatagramPacket receivedPacket = new DatagramPacket(receivedData, receivedData.length);
         	
     		try {
-        		serverSocket.receive(receivedPacket);
-			} catch (IOException e) {
+    		    serverSocket.receive(receivedPacket);
+    		    } catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-    		;
-			try {
-				String s = new String(receivedPacket.getData(),"utf-8");
-				System.out.println("PACKET AT LEAST RECEIVED: " +s);
-			} catch (UnsupportedEncodingException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+    		
+		String xx = null;
+            
+                try {
+                     xx = Gzip.decompress(receivedPacket.getData());
+                     } catch (IOException e) {
+                                // TODO Auto-generated catch block
+                                e.printStackTrace();
+                     }
+            
+                System.out.println("PACKET AT LEAST RECEIVED: " +xx);
     		
     		MessageService.getInstance().addToMessageBuffer(new MessageObject(uuid,StaticResources.UDP_RECEIVER, receivedPacket));
 			MessageService.getInstance().wakeThread();
