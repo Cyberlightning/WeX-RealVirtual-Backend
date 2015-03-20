@@ -31,11 +31,12 @@ public class TestRoutine implements Runnable {
 		Runnable receiveRoutine = new TestReceiver();
 		Thread t = new Thread(receiveRoutine);
 		t.start();
+		int refreshTime = 5000;
 		
 		while (true) {
 		
 			try {
-				Thread.sleep(3000);
+				Thread.sleep(refreshTime);
 			} catch (InterruptedException e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
@@ -48,7 +49,7 @@ public class TestRoutine implements Runnable {
 			
 //			String.valueOf(timestamp);
 			
-			String sample = "{\"d23c058698435eff\":{\"d23c058698435eff\":{\"sensors\":[{\"configuration\":[{\"interval\":1000,\"unit\":\"ms\"}],\"value\":{\"unit\":\"meters in second\",\"primitive\":\"double\",\"time\":\""+String.valueOf(timestamp)+"\",\"values\":\""+ anemoVal +"\"},\"attributes\":{\"type\":\"anemometer\",\"voltage\":\"5v\",\"vendor\":\"Modern Device\",\"name\":\"wind speed meter\"}}],\"actuators\":[{\"configuration\":[],\"actions\":[{\"value\":\"[true,false]\",\"primitive\":\"Boolean\",\"unit\":\"boolean\",\"parameter\":\"powerstate\"}],\"callbacks\":[{\"target\":\"powerstate\",\"return_type\":\"Boolean\"}],\"attributes\":{\"type\":\"powersocket\",\"name\":\"IQSW-IP 10 IQSocket\"}}],\"attributes\":{\"location\":\"Cyber development\",\"gps\":[65.0117870432389,25.47571696359944],\"name\":\"CyberDruido\"}}}}";
+			String sample = "{\"d23c058698435eff\":{\"d23c058698435eff\":{\"sensors\":[{\"configuration\":[{\"interval\":"+String.valueOf(refreshTime)+",\"unit\":\"ms\"}],\"value\":{\"unit\":\"meters in second\",\"primitive\":\"double\",\"time\":\""+String.valueOf(timestamp)+"\",\"values\":\""+ anemoVal +"\"},\"attributes\":{\"type\":\"anemometer\",\"voltage\":\"5v\",\"vendor\":\"Modern Device\",\"name\":\"wind speed meter\"}}],\"actuators\":[{\"configuration\":[],\"actions\":[{\"value\":\"[true,false]\",\"primitive\":\"Boolean\",\"unit\":\"boolean\",\"parameter\":\"powerstate\"}],\"callbacks\":[{\"target\":\"powerstate\",\"return_type\":\"Boolean\"}],\"attributes\":{\"type\":\"powersocket\",\"name\":\"IQSW-IP 10 IQSocket\"}}],\"attributes\":{\"location\":\"Cyber development\",\"gps\":[65.0117870432389,25.47571696359944],\"name\":\"CyberDruido\"}}}}";
 			byte[] byteBuffer = null;
 			try {
 				byteBuffer = Gzip.compress(sample);
